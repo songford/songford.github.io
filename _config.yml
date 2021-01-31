@@ -93,21 +93,22 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
-  location         : "Somewhere"
-  email            :
+  name             : "Chuning Song"
+  avatar           : "https://avatars.githubusercontent.com/u/7297840?s=460&u=57177fa602b2ca92d668815edb2a20f840967244&v=4"
+  bio              : >
+    Geek, Husband, Piano Player.
+  location         : "Shanghai / Melbourne"
+  email            : "songford@me.com"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
-      # url: "mailto:your.name@email.com"
+      url: "mailto:songford@me.com"
     - label: "Website"
       icon: "fas fa-fw fa-link"
-      # url: "https://your-website.com"
+      url: "https://www.chuningsong.com"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url: "https://github.com/"
+      url: "https://github.com/songford/"
 
 
 # Site Footer
