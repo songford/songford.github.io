@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title:  "SLx Explained"
 date:   2021-01-31 
 categories: SRE
