@@ -10,6 +10,6 @@ Let's be honest. Most of the time, the majority of folks around will just spam *
 
 ## SLA?
 
-![Imgur](https://imgur.com/Z33sDR9)
+{% include figure image_path="https://imgur.com/Z33sDR9" alt="" caption="Lettuce?" %}
 
 In traditional softwares which are distributed as a downloadable binary or an installation media, the legal binding contract between you and the publisher is usually called *EULA (End-User License Agreement)* 
