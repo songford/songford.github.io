@@ -1,0 +1,15 @@
+---
+layout: post
+title:  "SLx Explained"
+date:   2021-01-31 
+categories: SRE
+---
+If you wander around the internet, or even just installing softwares, sooner or later, you will bump into *SLx*. Some of them are titled *EULA*, and some of them are *SLA*s. They look boring, and **boring**. If you encounter one during software installation, the company distributing it will even request you to read through **carefully**. 
+
+Let's be honest. Most of the time, the majority of folks around will just spam **NEXT** to all these boring pages to the place where you decide where you'd like the software to be installed. Granted, there won't be dire consequences by neglecting these boring documents in most cases. However, in terms of services on cloud, these legal documents suddenly become very important, and I would advise you on reading them **very carefully**.  
+
+## SLA?
+
+![Imgur](https://imgur.com/Z33sDR9)
+
+In traditional softwares which are distributed as a downloadable binary or an installation media, the legal binding contract between you and the publisher is usually called *EULA (End-User License Agreement)* 
