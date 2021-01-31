@@ -4,12 +4,100 @@ title:  "SLx Explained"
 date:   2021-01-31 
 categories: SRE
 ---
-If you wander around the internet, or even just installing softwares, sooner or later, you will bump into *SLx*. Some of them are titled *EULA*, and some of them are *SLA*s. They look boring, and **boring**. If you encounter one during software installation, the company distributing it will even request you to read through **carefully**. 
+If you wander around the internet, or even just installing softwares, sooner or later, you will bump into *SLx*. Some of them are titled *EULA*, and some of them are *SLA*s. They look boring, and **boring**.
 
 Let's be honest. Most of the time, the majority of folks around will just spam **NEXT** to all these boring pages to the place where you decide where you'd like the software to be installed. Granted, there won't be dire consequences by neglecting these boring documents in most cases. However, in terms of services on cloud, these legal documents suddenly become very important, and I would advise you on reading them **very carefully**.  
 
 ## SLA?
 
-{% include figure image_path="https://imgur.com/Z33sDR9" alt="" caption="Lettuce?" %}
+{% include figure image_path="https://imgur.com/Z33sDR9.png" alt="" caption="Lettuce?" %}
 
-In traditional softwares which are distributed as a downloadable binary or an installation media, the legal binding contract between you and the publisher is usually called *EULA (End-User License Agreement)* 
+In traditional softwares which are distributed as downloadable binaries or installation media, the legal binding contract between you and the publisher is usually called *EULA (End-User License Agreement)*. 
+
+However, in the context of cloud services, we usually call it *SLA (Service Level Agreement)*. SLA is more or less synonymous to *EULA*, but as EULAs are applicable if a user **purchases** a software, which is usually not the case with cloud service providers, hence its namesake. 
+
+In SLAs, the service level (SL) is usually defined like:
+
+>AWS will use commercially reasonable efforts to make the Included Services each available for each AWS region with a Monthly Uptime Percentage of at least 99.99%, in each case during any monthly billing cycle (the “Service Commitment”). In the event any of the Included Services do not meet the Service Commitment, you will be eligible to receive a Service Credit as described below. [^1]
+
+What are the implications then? 
+
+1. The service provider is not guaranteeing the service will always be available. 
+	
+	> Monthly Uptime Percentage of at least 99.99%
+   
+   *not 100%!*
+
+2. The service provider is at its convenience to define what *Uptime* means in the SLA. 
+	
+	Being *up* can be defined as simple as a health endpoint returns `up`, or can be defined as being able to serve requests, which requires drastically more than just being able to serve a health ping. 
+
+3. The service provider defines the compensation should it violates the agreement.
+
+  > you will be eligible to receive a Service Credit as described below
+  
+  **Service Credit**, not cash. 
+  
+4. Most of the time, unless otherwise stated in the agreement, **planned downtime** is not considered downtime. 
+
+In sum, the agreement basically says if in any calendar month, it fails to respond for accumulatively more than 4 minutes [^2], the provider will give you a certain number of free credits as compensation. 
+
+That's like 8 seconds of downtime per day in average. Pretty reliable! 
+
+## SLx?
+
+Diligent readers like you might have noticed this article is titled *SLx Explained*, instead of *SLA explained*. 
+
+Let me hereby formally introduce the brothers of SLA: **SLO** and **SLA**. These three terms form the foundation of SRE. 
+
+### SLO?
+
+SLO stands for **Service Level Objective**. Quoting from the SRE book: 
+
+> If failing an SLA doesn't incur legal consequences, you are probably talking SLO. [^3]
+
+SLO is a development team facing target instead of customer-facing. Normally, you can set up a SLO (i.e. 99% available every sprint, usually higher than your published SLA) internally, and team members will use its value as a guideline in planning the tasks for this sprint. For instance, if your SLO is 99% and your availability for this sprint calculates at 99.99%, then you have 0.99% of what is called **error budget** at your disposal. Your team will then be able to use that budget to do `unsafe` things, such as improving the code base, or shuffling the backend DB, etc. 
+
+Nevertheless, if your development team fails to meet SLO, you should stop commiting to new features, and instead consider doing improvements on being able to meet SLO in the next sprint. 
+
+### SLI? 
+
+SLI stands for **Service Level Indicator**. In essence, it is the set of metrics on how you would define your system to be in an up and running state. 
+
+In the majority of cases, SLI bares different level of complexity internally and externally: pending on acceptance from your customers, you can define SLI as simple as being able to pong to a ping request, but internally, you should set SLI to be as complete and thorough as possible. By separating internal and external SLIs, you make it very hard to fail external SLI, hence saving you from potential legal trouble should you breach it, as well as requiring your development team to take their chances at improving the actual quality of the code base. With that being said, making them both complete will make your service look trustworthy to a potential customer. *If they bother to review the boring legal stuff, that is!*
+
+As a rule of thumb, SLIs can be derived from the 4 golden signals: [^4]
+
+- Latency
+- Traffic
+- Errors
+- Saturation
+
+A sample internal SLI that covers all quarters should go like:
+
+> All requests should finish within 100 milliseconds under 100 simultaneous calls from 10 clients, with 1% of the total calls resulting in non `2xx` response code, and the CPU shouldn't go beyond 80% in the process. 
+
+Pretty tough eh. Meeting it basically involves every parties in the calling chain, such as app, DB, storage and so on. Failing it is considered *down*.  
+
+Whereas an external SLI can be like:
+
+> WHEN I PING, YOU PONG!
+
+if your customer agrees to it. 
+
+## Summary
+
+SLA, SLI and SLO are the pillars of SRE. 
+
+SLA targets the consumers. There will be repercussion, potentially legal consequences, from failing it. Usually, it is drafted by the legal department of your company. 
+
+SLO integrates into agile/scrum development as a key criterium and guideline in the review and planning meetings. It helps to define the internal quality of the software. Failing SLO won't incur legal consequences. It just means your team should start considering improving on the situation, as it is indicative of deeper issues underneath that could be serious. 
+
+SLI is a set of criteria upon which you define your service to be up. There are tools that can help you quantatively measure and collect the data to derive it, such as [Prometheus](https://prometheus.io/), [Zipkin](https://zipkin.io/), [Jaeger](https://www.jaegertracing.io/), and so on. 
+
+
+[^1]: [Amazon Compute Service Level Agreement](https://aws.amazon.com/compute/sla/)
+[^2]: `(1 - 99.99%) * 30 days * 24 hours * 60 minutes = 4.32 minutes`
+[^3]: [https://sre.google/workbook/implementing-slos/](https://sre.google/workbook/implementing-slos/)
+[^4]: [https://sre.google/sre-book/monitoring-distributed-systems/](https://sre.google/sre-book/monitoring-distributed-systems/)
+ 
