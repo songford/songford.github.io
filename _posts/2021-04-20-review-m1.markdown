@@ -13,6 +13,9 @@ Is it up for the challenge to be used as the sole daily workhorse for the trade?
 
 Verdict? I'm optimistically recommending it, although with caveats.  
 
+![image](https://user-images.githubusercontent.com/7297840/116061435-6c3a8d00-a6b5-11eb-9a21-884b8bc773cd.png)
+
+
 ---
 
 ## Impression
@@ -83,9 +86,13 @@ docker: no matching manifest for linux/arm64/v8 in the manifest list entries.
 
 In Docker 101, we know that if you want to pin down to a certain image, you need to nominate a `repository/image`, as well as a `tag`. But there's more to it. `arch` is also something you need to supply when you want to establish a one-to-one relationship to an image. Take this example with `mariadb` below:
 
+![image](https://user-images.githubusercontent.com/7297840/116063050-16ff7b00-a6b7-11eb-8546-8c89beba6754.png)
+
 Apparently, `mariadb` builds images for three different `arch`: `linux/amd64` (x86-64), `linux/arm64/v8` (our Apple Silicon, as well as other arm chips, such as `Cortex A8` and so on), and `linux/ppc64le` (PowerPC). 
 
 With `mysql`,
+
+![image](https://user-images.githubusercontent.com/7297840/116063034-11a23080-a6b7-11eb-8c84-efe8a52f07e3.png)
 
 the release team only builds for `linux/amd64`. That's why docker complains when you ask it to run `mysql:latest`. It can't find that image! 
 
@@ -120,6 +127,10 @@ For some reasons, `mysql` runs especially bad on M1, and takes 8x as much time n
 
 In summary, readers are advised to use `mariadb` on their Macs powered by Apple Silicon instead of `mysql` if needed. Nevertheless, I am yet to discover an image that doesn't run on M1, albeit there are usually performance penalties. 
 
+![image](https://user-images.githubusercontent.com/7297840/116062812-d4d63980-a6b6-11eb-8280-06ca7c53d372.png)
+![image](https://user-images.githubusercontent.com/7297840/116062955-ff27f700-a6b6-11eb-97cd-581fa5c42762.png)
+*There are occasional glitches. In one instance, a Jenkins container crashed the entire `dockerd` and its Linux kernel.*
+
 ### Virtual Machines?
 
 To summarise what information I have gathered regarding to VM hosts on Apple Silicon, please refer to the table below:
@@ -134,7 +145,15 @@ To summarise what information I have gathered regarding to VM hosts on Apple Sil
 
 In summary, I think there probably won't be a free solution ahead for virtualisation on Apple Silicons if you want to use the VM in a GUI setting, as VirtualBox specifically said they are a product dedicated to virtualisation on **x86** CPUs. 
 
-To add insult to injury, you can only use the ARM version of an OS even if you have a paid subscription to Parallels Desktop/Vmware Fusion. This is less of an issue for Unix-based system as ARM was prevalent in the community for quite long and the majority of softwares in the Linux ecosystem have releases for ARM. Windows though, is another story. 
+To add insult to injury, you can only use the ARM version of an OS even if you have a paid subscription to Parallels Desktop/Vmware Fusion. This is less of an issue for Unix-based system as ARM was prevalent in the community for quite long and the majority of softwares in the Linux ecosystem have releases for ARM. 
+
+Windows though, is another story. Thankfully, Windows for ARM has an in-built translator for **x86** based programs as well, so you should be able to run most of the programs on Windows on Apple M1, although there are quite some hoops to jump through! (Apple Silicon -> Parallels Desktop -> Windows ARM -> Windows x86)
+
+![image](https://user-images.githubusercontent.com/7297840/116062214-4bbf0280-a6b6-11eb-9f32-67316045c8a5.png)
+*Installing Windows 10 on ARM*
+
+![image](https://user-images.githubusercontent.com/7297840/116062285-56799780-a6b6-11eb-9606-99f295ee2977.png)
+*Playing Fallout 2 on my Windows 10 on ARM on Parallels Desktop on my M1 Macbook Air*
 
 # Conclusion
 
