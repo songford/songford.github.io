@@ -56,7 +56,7 @@ and
 
 quoting from [here](https://docs.docker.com/docker-for-mac/apple-silicon/).
 
-Thanks to that, you'll notice some of the usual docker commands you are accustomed to see them return immediately become somewhat sluggish, such as `docker ps` or `docker image ls`. This is because Rosetta is busy translating x86 codes into ARM-based instructions. Subsequent invocations are noticeably faster, but still falls behind my work Intel Mac. Here is a table comparing some of the most frequently used docker commands and corresponding performance. I have run the commands on M1 Mac for 10 times each before taking the number to make sure optimisations by Rosetta are taking effects:
+Thanks to that, you'll notice some of the usual docker commands you expect to see them return immediately become somewhat sluggish, such as `docker ps` or `docker image ls`. This is because Rosetta is busy translating x86 codes into ARM-based instructions. Subsequent invocations are noticeably faster, but still falls behind my work Intel Mac. Here is a table comparing some of the most frequently used docker commands and corresponding performance. I have run the commands on M1 Mac for 10 times each before taking the number to make sure optimisations by Rosetta are taking effects:
 
 |                 | Intel Mac | M1 Mac |
 |-----------------|-----------|--------|
