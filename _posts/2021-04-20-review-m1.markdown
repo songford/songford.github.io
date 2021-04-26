@@ -120,7 +120,7 @@ For your reference, I have put together a table to compare the time taken on my 
 | `mariadb:10.5.9`      | Yes                 | `docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw mariadb:10.5.9`        | 7s                      | 15s                  |
 | `postgres:13-alpine`  | Yes                 | `docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword postgres:13-alpine` | 1s                      | 3s                   |
 
-For some reasons, `mysql` runs especially bad on M1, and takes 8x as much time needed on my Intel Mac. Other images run about 2-3x slower on M1 in comparison to my 6-core Core i7 Mac. This may be due to a number of components in docker on M1 still require Rosetta. 
+For some reasons, `mysql` runs especially bad on M1, and takes 8x as much time needed on my Intel Mac. Other images run about 2-3x slower on M1 in comparison to my 6-core Core i7 Mac. This may be due to a number of components in docker on M1 still require in-place translation. 
 
 In summary, readers are advised to use `mariadb` on their Macs powered by Apple Silicon instead of `mysql` if needed. Nevertheless, I am yet to discover an image that doesn't run on M1, albeit there are usually performance penalties. 
 
