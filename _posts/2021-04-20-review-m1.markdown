@@ -7,11 +7,7 @@ categories: Review
 
 So I traded in my aging 2016 MacBook Pro for a new MacBook Air with M1 installed. It is fitted with 16GB of RAM and 256GB of SSD. 
 
-I've been using for some days now, and I think perhaps I'm at a position to give it a review as an SRE. 
-
-Is it up for the challenge to be used as the sole daily workhorse for the trade? 
-
-Verdict? I'm optimistically recommending it, although with caveats.  
+Here are my thoughts.
 
 ![image](https://user-images.githubusercontent.com/7297840/116061435-6c3a8d00-a6b5-11eb-9a21-884b8bc773cd.png)
 
