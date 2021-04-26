@@ -36,7 +36,7 @@ Of course, I am nothing but an Apple shill if I just accentuate on the positive 
 
 ### Tools?
 
-[Rosetta 2](https://en.wikipedia.org/wiki/Rosetta_(software)#Rosetta_2) is actually good at translating x86 applications to be able to run with Apple Silicon. The usual fleet of applications I use throughout a normal work day are all perfectly runnable, such as IntelliJIdea, GoLand, and so on. Command line utilities such as `git`, `terraform`, `kubectl` are also running spotless. 
+[Rosetta 2](https://en.wikipedia.org/wiki/Rosetta_(software)#Rosetta_2) is actually good at translating x86 applications to be able to run with Apple Silicon. The usual fleet of applications I use throughout a normal work day are all perfectly runnable, such as IntelliJIdea, GoLand, and so on. Command line utilities such as `git`, `terraform`, `kubectl` are also running spotless, to the point where you stop caring whether a certain binary is natively ARM or x86. 
 
 `Homebrew`, on the other hand, needs a bit of tweaking, although you don't need to actually do anything. It just link your binaries to `/opt/homebrew/bin` instead of the usual `/usr/local/bin` on Intel Macs. Based on my current understanding, the convention seems to be that all native `arm64` binaries will go to `/opt/homebrew/bin`, and all `x86-64` binaries, which run with the help of Rosetta 2, will go to `/usr/local/bin`.
 
