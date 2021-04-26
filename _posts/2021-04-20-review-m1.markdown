@@ -1,0 +1,143 @@
+---
+layout: single
+title:  "An SRE's Thoughts on Apple M1"
+date:   2021-01-31
+categories: Review
+---
+
+So I traded in my aging 2016 MacBook Pro for a new MacBook Air with M1 installed. It is fitted with 16GB of RAM and 256GB of SSD. 
+
+I've been using for some days now, and I think perhaps I'm at a position to give it a review as an SRE. 
+
+Is it up for the challenge to be used as the sole daily workhorse for the trade? 
+
+Verdict? I'm optimistically recommending it, although with caveats.  
+
+---
+
+## Impression
+
+### Thermals
+
+*My god! Isn't it cool and quiet!*
+
+Seriously speaking, you don't even need to consider whether you should jump on this bandwagon if you are a developer who don't interact with virtualisation technologies on a daily basis, or you would rather schedule your VMs on hyperscalers. It's *almost* a no-brainer. 
+
+There isn't a fan installed on this laptop. Not that I think it needs one, mind you. The chassis is almost always at most **warm** no matter how much task I am throwing at it. I've kicked up *Compressor* to transcode some of the footage I took from a trip, and after a while, certain areas on the back of the chassis is on the borderline of what I would call *hot*, but the keyboard is still comfortable to type on as I'm typing this article. On the other hand, my 16-inch work MacBook Pro 2019 that has 6-core Core i7 which is sitting right next to me is usually quite warm at idle, fan blowing crazy with load, and I don't even dare to put that laptop on my lap. The bottom feels almost like a slow-cooker to me. ^[1] *Oh the irony.*
+
+Apparently, to compensate the lack of fans on MacBook Air, thermal throttling will kick in if it gets too hot. Pro-users aiming for maximum performance should be looking at MacBook Pro with M1 instead. They have fans. I don't really care though. My thermal-throttled MacBook Air still transcodes videos about 1.3x as fast as my work MBP, which costs about twice as much. 
+
+### Battery life?
+
+I've heard good things about the battery life of MacBooks with Apple Silicon. It is indeed quite good. Two hours of what I'd consider heavy usage[2] drains about 20% battery. Therefore, with a bit of linear interpolation, one can assume a fully recharge should at least give you about 10 hours of battery life. I didn't do quantitive comparison with my work MacBook Pro, but my gut feeling is two hours of such usage will leave me with around 20% battery remaining on that thing. Again, if you aren't satisfied with the stamina of MacBook Air, feel free to chip in a bit more for MacBook Pro, which has larger batteries. 
+
+
+## Suitability for Work
+
+Of course, I am nothing but an Apple shill if I just accentuate on the positive without talking about the negative. Here I go. 
+
+### Tools?
+
+[Rosetta 2](https://en.wikipedia.org/wiki/Rosetta_(software)#Rosetta_2) is actually good at translating x86 applications to be able to run with Apple Silicon. The usual fleet of applications I use throughout a normal work day are all perfectly runnable, such as IntelliJIdea, GoLand, and so on. Command line utilities such as `git`, `terraform`, `kubectl` are running spotless. 
+
+`Homebrew`, on the other hand, needs a bit of tweaking, although you don't need to actually do anything. It just link your binaries to `/opt/homebrew/bin` instead of the usual `/usr/local/bin` on Intel Macs. Based on my current understanding, the convention seems to be that all native `arm64` binaries will go to `/opt/homebrew/bin`, and all `x86-64` binaries, which run with the help of Rosetta 2, will go to `/usr/local/bin`.
+
+Homebrew 3.0 takes care of all the gotchas I've just mentioned for you, so you don't need to do anything if you straight up install verion 3. If you are on version 2.x, a `brew upgrade` will fix everything up for you. 
+
+### Docker?
+
+Recently, Docker [announced](https://www.docker.com/blog/released-docker-desktop-for-mac-apple-silicon/) its Docker for Apple Silicon finally goes to GA. Hooray! Vale, Intel Macs!
+
+Well...not quite. As a matter of fact, `Rosetta` is still needed, since 
+
+> some binaries are still Darwin/AMD64 
+
+and
+
+> We expect to fix this in a future release.
+
+quoting from [here](https://docs.docker.com/docker-for-mac/apple-silicon/).
+
+Thanks to that, you'll notice some of the usual docker commands you are accustomed to see them return immediately become somewhat sluggish, such as `docker ps` or `docker image ls`. This is because Rosetta is busy translating x86 codes into ARM-based instructions. Subsequent invocations are noticeably faster, but still falls behind my work Intel Mac. Here is a table comparing some of the most frequently used docker commands and corresponding performance. I have run the commands on M1 Mac for 10 times each before taking the number to make sure optimisations by Rosetta are taking effects:
+
+|                 | Intel Mac | M1 Mac |
+|-----------------|-----------|--------|
+| `docker  `        | 0.15s     | 0.19s  |
+| `docker image ls` | 0.11s     | 0.14s  |
+| `docker ps`       | 0.12s     | 0.14s  |
+
+It's barely noticeable after the initial warm-up.
+
+### `arch`?
+
+On Apple Silicon, 
+
+```shell
+MacBook-Air ~ % docker run mysql:latest
+```
+will fail with
+
+```shell
+docker: no matching manifest for linux/arm64/v8 in the manifest list entries.
+```
+
+In Docker 101, we know that if you want to pin down to a certain image, you need to nominate a `repository/image`, as well as a `tag`. But there's more to it. `arch` is also something you need to supply when you want to establish a one-to-one relationship to an image. Take this example with `mariadb` below:
+
+Apparently, `mariadb` builds images for three different `arch`: `linux/amd64` (x86-64), `linux/arm64/v8` (our Apple Silicon, as well as other arm chips, such as `Cortex A8` and so on), and `linux/ppc64le` (PowerPC). 
+
+With `mysql`,
+
+the release team only builds for `linux/amd64`. That's why docker complains when you ask it to run `mysql:latest`. It can't find that image! 
+
+Does that mean we are out of luck with `mysql`? No. Not really.
+
+What you need to do, is to go to docker hub, find the tag you want (i.e. `latest`), grab the complete digest (i.e. `bbeff35b63bf28aeb024de309aab2d501f8aa30e94664d3840d55b36c8db53c8`), and alter the command to
+
+```shell
+docker run mysql@sha256:bbeff35b63bf28aeb024de309aab2d501f8aa30e94664d3840d55b36c8db53c8
+```
+
+Docker will complain about
+
+```
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+```
+
+but proceeds to run the container anyways. 
+
+As you may have rightfully guessed, Rosetta actually translates the image to `arm64` just-in-time. Impressive as it is, performance will take a hit. 
+
+For your reference, I have put together a table to compare the time taken on my work Mac (6-core Core i7) and M1 MacBook Air (16GB RAM) to start containers until the containers are ready:
+
+| Image                 | Has native `arm64`? | Command being used to benchmark the performance                                            | Time taken on Intel Mac | Time taken on M1 Mac |
+|-----------------------|---------------------|--------------------------------------------------------------------------------------------|-------------------------|----------------------|
+| `mysql:8.0.24`        | No                  | `docker run -e MYSQL_ROOT_PASSWORD=my-secret-pw mysql:8.0.24`                               | 14s                     | 102s                 |
+| `jenkins/jenkins:lts` | No                  | `docker run -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts`                               | 15s                     | 30s                  |
+| `mariadb:10.5.9`      | Yes                 | `docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw mariadb:10.5.9`        | 7s                      | 15s                  |
+| `postgres:13-alpine`  | Yes                 | `docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword postgres:13-alpine` | 1s                      | 3s                   |
+
+For some reasons, `mysql` runs especially bad on M1, and takes 8x as much time needed on my Intel Mac. Other images run about 2-3x slower on M1 in comparison to my 6-core Core i7 Mac. This may be due to a number of components in docker on M1 still require Rosetta. 
+
+In summary, readers are advised to use `mariadb` on their Macs powered by Apple Silicon instead of `mysql` if needed. Nevertheless, I am yet to discover an image that doesn't run on M1, albeit there are usually performance penalties. 
+
+### Virtual Machines?
+
+To summarise what information I have gathered regarding to VM hosts on Apple Silicon, please refer to the table below:
+
+|                          | Supported | Cost to own | GUI Interface? | Comments                                                                                                                                                                                                                                                                                                                    |
+|--------------------------|-----------|-------------|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| VMWare Fusion            | No        | $149        | Yes            | Not currently supported, but there are [hints](https://twitter.com/mikeroySoft/status/1382730608103723009?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1382730608103723009%7Ctwgr%5E%7Ctwcon%5Es1_c10&ref_url=https%3A%2F%2Fwww.tomshardware.com%2Fnews%2Fvmware-support-m1-macs-soon) that it's coming very soon.  |
+| VirtualBox               | No        | Free        | Yes            | Probably never. VirtualBox is a a free and open-source hosted hypervisor for **x86** virtualization                                                                                                                                                                                                                         |
+| Parallels Desktop        | Yes       | $80         | Yes            | Runs very well.                                                                                                                                                                                                                                                                                                             |
+| Virtualization.framework | Yes       | Free        | No             | Inbuilt in macOS Big Sur. Can be used with tools like [https://github.com/evansm7/vftool].                                                                                                                                                                                                                                |
+| HyperKit                 | Yes (?)   | Free        | No             | Haven't been able to find any direct confirmation, but since Docker runs on top of it on M1, I assume it works.                                                                                                                                                                                                       |
+
+In summary, I think there probably won't be a free solution ahead for virtualisation on Apple Silicons if you want to use the VM in a GUI setting, as VirtualBox specifically said they are a product dedicated to virtualisation on **x86** CPUs. 
+
+To add insult to injury, you can only use the ARM version of an OS even if you have a paid subscription to Parallels Desktop/Vmware Fusion. This is less of an issue for Unix-based system as ARM was prevalent in the community for quite long and the majority of softwares in the Linux ecosystem have releases for ARM. Windows though, is another story. 
+
+# Conclusion
+
+Apple has kicked off a wild and thrilling journey for all of us, **chip sharks** in this industry alike. We've been seeing lukewarm releases from Intel for quite some years. Last year products were re-packaged and released as a new generation without any fundamental changes. They sit complacently for too long, and somebody needs to give them a reminder of what a serious challenger looks like.
+
+I am satisfied with my purchase so far, but your mileage might vary. Few softwares released by 3rd-party companies have built natively for Apple Silicon, but Rosetta 2 yields acceptable performance at least to my liking. With years go by, more software providers will jump on this bandwagon, and with the performance, thermal control and battery life of an ARM-based processor, I am optimistic to the future of Apple Silicon-based Macs. 
