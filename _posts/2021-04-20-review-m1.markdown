@@ -154,7 +154,7 @@ Windows though, is another story. Thankfully, Windows for ARM has an in-built tr
 
 # Conclusion
 
-Seriously speaking, you don't even need to consider whether you should upgrade if you are a non-developer, or a developer who don't interact with virtualisation technologies on a daily basis, or you would rather schedule your VMs on hyperscalers. It's *almost* a no-brainer. 
+Seriously speaking, you don't even need to consider whether you should upgrade if you are a non-developer, or a developer who don't interact with virtualisation technologies on a daily basis, or you would rather schedule your VMs on hyperscalers. It's *almost* a no-brainer. Unless you happen to have some eccentric software that doesn't run on a Mac. In that case, since Bootcamp isn't a thing on Apple Silicon, I'd suggest go for a VM host and start from there. 
 
 Apple has kicked off a wild and thrilling journey for all of us, **chip sharks** in the industry alike. We've been seeing lukewarm releases from Intel for quite some years. Last year products were re-packaged and released as a new generation without any fundamental changes. They sit complacently for too long, and somebody needs to give them a reminder of what a serious challenger looks like.
 
