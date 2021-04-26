@@ -120,6 +120,8 @@ For your reference, I have put together a table to compare the time taken on my 
 
 For some reasons, `mysql` runs especially bad on M1, and takes 8x as much time needed on my Intel Mac. Other images run about 2-3x slower on M1 in comparison to my 6-core Core i7 Mac. This may be due to a number of components in docker on M1 still require in-place translation. 
 
+Another anecdotal sidenote I realised is having a natively-built ARM image doesn't seem to help that much in performance. Regardless of having `arm64` support (as in the case of `mariadb`) or not (as in the case of `jenkins`), docker container on M1 seems to be roughly half as fast in comparison to an Intel Mac. 
+
 In summary, readers are advised to use `mariadb` on their Macs powered by Apple Silicon instead of `mysql` if needed. Nevertheless, I am yet to discover an image that doesn't run on M1, albeit there are usually performance penalties. 
 
 ![image](https://user-images.githubusercontent.com/7297840/116062812-d4d63980-a6b6-11eb-8280-06ca7c53d372.png)
