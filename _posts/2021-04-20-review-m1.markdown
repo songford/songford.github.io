@@ -26,7 +26,7 @@ Apparently, to compensate the lack of fans on MacBook Air, thermal throttling wi
 
 ### Battery life?
 
-I've heard good things about the battery life of MacBooks with Apple Silicon. It is indeed quite good. Two hours of what I'd consider heavy usage drains about 20% battery. Therefore, with a bit of linear interpolation, one can assume a full recharge should at least give you about 10 hours of battery life. I didn't do quantitive comparison with my work MacBook Pro, but my gut feeling is two hours of such usage will leave me with around 20% battery remaining on that thing. Again, if you aren't satisfied with the stamina of MacBook Air, feel free to chip in a bit more for MacBook Pro, which has larger batteries. 
+I've heard good things about the battery life of MacBooks with Apple Silicon. It is indeed quite good. Two hours of what I'd consider heavy usage (building docker images, compressing videos) drains about 20% battery. Therefore, with a bit of linear interpolation, one can assume a full recharge should at least give you about 10 hours of battery life. I didn't do quantitive comparison with my work MacBook Pro, but my gut feeling is two hours of such usage will leave me with around 20% battery remaining on that thing. Granted, to be fair, I would expect time has taken toil on its stamina, but still, the contrast is just too stark. Again, if you aren't satisfied with the stamina of MacBook Air, feel free to chip in a bit more for MacBook Pro, which has larger batteries. 
 
 The massively improved battery life will have profound implications on the way you use your laptop. For instance, previously, when I join rehearsal sessions with my band, I will most certainly need to bring my power brick with me because my Intel-based Mac, with Logic Pro and MainStage running, won't last for the entirety of a band rehearsal which usually runs for about 5 hours. Securing a power point is another concern. With my new MacBook Air, it stops being an issue anymore. On an intercontinental flight, attending lectures across different classrooms, working on a train, lying in bed watching movies...Just to name a few scenario where longer battery life and being able to roam cordlessly will help. 
 
@@ -46,7 +46,7 @@ Homebrew 3.0 takes care of all the gotchas I've just mentioned for you, so you d
 
 Recently, Docker [announced](https://www.docker.com/blog/released-docker-desktop-for-mac-apple-silicon/) its Docker for Apple Silicon finally goes to GA. Hooray! Vale, Intel Macs!
 
-Well...not quite. As a matter of fact, `Rosetta` is still needed, since 
+Not quite. As a matter of fact, `Rosetta` is still needed, since 
 
 > some binaries are still Darwin/AMD64 
 
@@ -89,9 +89,9 @@ With `mysql`,
 
 ![image](https://user-images.githubusercontent.com/7297840/116063034-11a23080-a6b7-11eb-8c84-efe8a52f07e3.png)
 
-the release team only builds for `linux/amd64`. That's why docker complains when you ask it to run `mysql:latest`. It can't find that image! 
+the release team only builds for `linux/amd64`. That's why docker on M1 complains when you ask it to run `mysql:latest`. It can't find a build for `arm64`! 
 
-Does that mean we are out of luck with `mysql`? No. Not really.
+Does that mean we are out of luck with `mysql`? Not really.
 
 What you need to do, is to go to docker hub, find the tag you want (i.e. `latest`), grab the complete digest (i.e. `bbeff35b63bf28aeb024de309aab2d501f8aa30e94664d3840d55b36c8db53c8`), and alter the command to
 
